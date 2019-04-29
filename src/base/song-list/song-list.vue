@@ -1,12 +1,17 @@
 <template>
   <div class="song-list">
     <ul>
-      <li 
-        v-for="(song, index) of songs" 
-        :key="song.id" 
+      <li
+        v-for="(song, index) of songs"
+        :key="song.id"
         @click="selectItem(song, index)"
         class="item"
       >
+        <div class="rank" v-show="rank">
+          <span :class="getRankCls(index)">
+            {{getRankText(index)}}
+          </span>
+        </div>
         <div class="content">
           <h2 class="name">
             {{song.name}}
@@ -26,6 +31,10 @@
       songs: {
         type: Array,
         default: []
+      },
+      rank: {
+        type: Boolean,
+        default: false
       }
     },
     methods: {
@@ -34,7 +43,19 @@
       },
       getDesc (song) {
         return `${song.singer}·${song.album}`
-      }
+      },
+      getRankCls (index) {
+        if (index <= 2) {
+          return `icon icon${index}`
+        } else {
+          return 'text'
+        }
+      },
+      getRankText (index) {
+        if (index > 2) {
+          return index + 1
+        }
+      },
     }
   }
 </script>

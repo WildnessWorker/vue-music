@@ -37,11 +37,13 @@
     },
     methods: {
       _getDetail () {
-        if (!this.singerId){
+        if (!this.singer){
           this.$router.push('/singer')
           return
         }
+        console.log(this.singerId)
         getSingerDetail(this.singerId).then((res) => {
+          console.log(res)
           if (res.code === ERR_OK) {
             processSongsUrl(this._normalizeSongs(res.data.list)).then((songs) => {
               this.songs = songs

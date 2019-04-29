@@ -7,7 +7,7 @@
     @scroll="scroll"
   >
     <ul>
-      <li v-for="group of data" class="list-group" ref="listGroup" >
+      <li v-for="(group, index) of data" class="list-group" ref="listGroup" :key="index">
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
           <router-link v-for="items of group.items" :to="'/singer/'+ items.id" :key="items.id">
@@ -90,6 +90,9 @@
       }
     },
     methods: {
+      refresh () {
+        this.$refs.listview.refresh()
+      },
       onShortcutTouchStart (e) {
         // this.startIndex = e.target.getAttribute('data-index')
         let anchorIndex = getData(e.target, 'index')

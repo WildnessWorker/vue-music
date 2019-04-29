@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend">
+  <div class="recommend" ref="recommend">
     <scroll ref="scroll" class="recommend-content" :data="descList">
       <div>
         <div v-if="recommends.length" class="slider-wrapper">
@@ -16,7 +16,7 @@
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
-            <li v-for="item of descList" class="item">
+            <li @click="selectItem(item)" v-for="item of descList" class="item" :key="item.dissid">
               <div class="icon">
                 <img class="needsclick" width="60" height="60" v-lazy="item.imgurl" alt="">
               </div>
@@ -32,6 +32,7 @@
         <loading></loading>
       </div>
     </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -41,8 +42,11 @@
   import Slider from 'base/slider/slider'
   import {getRecommend, getDescList} from 'api/recommend'
   import {ERR_OK} from 'api/config'
+  import {mapMutations} from 'vuex'
+  import {playlistMixin} from 'common/js/mixin'
 
   export default {
+    mixins: [playlistMixin],
     data () {
       return {
         recommends: [],
@@ -55,6 +59,17 @@
 
     },
     methods: {
+      handlePlaylist (playlist) {
+        const bottom = playlist.length > 0 ? '60px' : ''
+        this.$refs.recommend.style.bottom = bottom
+        this.$refs.scroll.refresh()
+      },
+      selectItem (item) {
+        this.$router.push({
+          path:`/recommend/${item.dissid}`
+        })
+        this.setDisc(item)
+      },
       _getRecommend () {
         getRecommend().then((res) => {
           if (res.code === ERR_OK) {
@@ -64,7 +79,7 @@
       },
       _getDescList () {
         getDescList().then((res) => {
-          // console.log(res)
+          console.log(res)
           if (res.code === ERR_OK) {
             this.descList = res.data.list
           }
@@ -75,8 +90,10 @@
           this.$refs.scroll.refresh()
           this.checkLoaded = true
         }
-
-      }
+      },
+      ...mapMutations({
+        setDisc: 'SET_DISC'
+      })
     },
     components: {
       Slider,

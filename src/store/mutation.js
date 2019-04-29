@@ -16,10 +16,16 @@ const mutation = {
     state.sequenceList = list
   },
   [type.SET_PLAY_MODE](state, mode) {
-    state.playMode = mode
+    state.mode = mode
   },
   [type.SET_CURRENT_INDEX](state, index) {
     state.currentIndex = index
+  },
+  [type.SET_DISC](state, disc) {
+    state.disc = disc
+  },
+  [type.SET_TOP_LIST](state, topList) {
+    state.topList = topList
   }
 }
 export default mutation

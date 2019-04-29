@@ -20,7 +20,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
   },
   // cheap-module-eval-source-map is faster for development
-  devtool: config.dev.devtool,
+  // devtool: config.dev.devtool,
+  devtool: '#source-map',
 
   // these devServer options should be customized in /config/index.js
   devServer: {
@@ -29,7 +30,6 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       const querystring = require('querystring')
       app.get('/api/getDescList', function (req, res) {
         const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
-
         axios.get(url, {
           headers: {
             referer: 'https://c.y.qq.com/',
@@ -53,6 +53,70 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           }
         }).then((response) => {
           res.json(response.data)
+        }).catch((e) => {
+          console.log(e)
+        })
+      })
+
+
+      app.get('/api/lyric', function (req, res) {
+        const url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
+
+        axios.get(url, {
+          headers: {
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          let ret = response.data
+          if (typeof ret === 'string') {
+            const reg = /^\w+\(({.+})\)$/
+            const matches = ret.match(reg)
+            if (matches) {
+              ret = JSON.parse(matches[1])
+            }
+          }
+          res.json(ret)
+        }).catch((e) => {
+          console.log(e)
+        })
+      })
+
+      app.get('/api/getCdInfo', function (req, res) {
+        const url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
+
+        axios.get(url, {
+          headers: {
+            referer: 'https://y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          let ret = response.data
+          if (typeof ret === 'string') {
+            const reg = /^\w+\(({.+})\)$/
+            const matches = ret.match(reg)
+            if (matches) {
+              ret = JSON.parse(matches[1])
+            }
+          }
+          res.json(ret)
+        }).catch((e) => {
+          console.log(e)
+        })
+      })
+      //搜索歌词或歌手
+      app.get('/api/search', function (req, res) {
+        const url = 'https://c.y.qq.com/soso/fcgi-bin/client_search_cp'
+        axios.get(url, {
+          headers: {
+            referer: 'https://y.qq.com',
+            Origin: 'https://y.qq.com'
+          },
+          params: req.query
+        }).then((respones) => {
+          res.json(respones.data)
         }).catch((e) => {
           console.log(e)
         })

@@ -10,6 +10,7 @@
           class="play"
           ref="playBtn"
           v-show="songs.length > 0"
+          @click="random"
         >
           <i class="icon-play">
             <span class="text">
@@ -30,7 +31,7 @@
       ref="list"
     >
       <div class="song-list-wrapper">
-        <song-list @select="selectItem" :songs="songs"></song-list>
+        <song-list @select="selectItem" :rank="rank" :songs="songs"></song-list>
       </div>
       <div class="loading-container" v-show="!songs.length">
         <loading></loading>
@@ -45,11 +46,13 @@
   import SongList from 'base/song-list/song-list'
   import {prefixStyle} from 'common/js/dom'
   import {mapActions} from 'vuex'
+  import {playlistMixin} from 'common/js/mixin'
 
   const RESERVED_HEIGHT = 40
   const transform = prefixStyle('transform')
   const backdrop = prefixStyle('backdrop-filter')
   export default {
+    mixins: [playlistMixin], //此组件中和mixins里同名的方法会覆盖掉mixins里的方法
     props: {
       bgImage: {
         type: String,
@@ -62,6 +65,10 @@
       title: {
         type: String,
         default: ''
+      },
+      rank: {
+        type: Boolean,
+        default: false
       }
     },
     data () {
@@ -75,6 +82,11 @@
       }
     },
     methods: {
+      handlePlaylist (playlist) {
+        const bottom = playlist.length > 0 ? '60px' : ''
+        this.$refs.list.$el.style.bottom = bottom
+        this.$refs.list.refresh()
+      },
       scroll (pos) {
         this.scrollY = pos.y
       },
@@ -88,10 +100,15 @@
           index
         })
       },
-
+      random () {
+        this.randomPlay({
+          list: this.songs
+        })
+      },
       //mapActions 为vuex提供的语法糖，通过mapActions可以调用actions.js中的selectPlay方法
       ...mapActions([
-        'selectPlay'
+        'selectPlay',
+        'randomPlay'
       ])
     },
     created () {

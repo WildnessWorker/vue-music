@@ -23,6 +23,7 @@ export default class Song {
       getLyric(this.mid).then((res) => {
         if (res.retcode === ERR_OK) {
           this.lyric = Base64.decode(res.lyric)
+          // console.log(this.lyric)
           resolve(this.lyric)
         } else {
           reject('no lyric')
@@ -46,7 +47,7 @@ export function createSong(musicData) {
 }
 
 //因为抓取到的数据每首歌曲歌手名称是字符串类型但是因为其他页面的需要也要用到歌手名称所以在这里处理成数组并且以/隔开
-function filterSinger(singer) {
+export function filterSinger(singer) {
   let ret = []
   if (!singer) {
     return ''
@@ -65,14 +66,15 @@ export function processSongsUrl(songs) {
   if (!songs.length) {
     return Promise.resolve(songs)
   }
-  return getSongsUrl(songs).then((res) => {
-    if (res.code === ERR_OK) {
-      let midUrlInfo = res.url_mid.data.midurlinfo
-      midUrlInfo.forEach((info, index) => {
-        let song = songs[index]
-        song.url = `http://dl.stream.qqmusic.qq.com/${info.purl}`
-      })
-    }
+  return getSongsUrl(songs).then((purlMap) => {
+    songs = songs.filter((song) => {
+      const purl = purlMap[song.mid]
+      if (purl) {
+        song.url = purl.indexOf('http') === -1 ? `http://dl.stream.qqmusic.qq.com/${purl}` : purl
+        return true
+      }
+      return false
+    })
     return songs
   })
 }

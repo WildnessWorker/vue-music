@@ -1,12 +1,13 @@
-import { commonParams } from './config'
+import { commonParams, options } from './config'
 import { getUid } from 'common/js/uid'
 import axios from 'axios'
+import jsonp from 'common/js/jsonp'
 import { ERR_OK } from 'api/config'
 
 const debug = process.env.NODE_ENV !== 'production'
 
 export function getLyric(mid) {
-  const url = debug ? '/api/lyric' : 'http://localhost:8080/api/lyric'
+  const url = '/api/lyric'
 
   const data = Object.assign({}, commonParams, {
     songmid: mid,
@@ -26,7 +27,8 @@ export function getLyric(mid) {
 }
 
 export function getSongsUrl(songs) {
-  const url = debug ? '/api/getPurlUrl' : 'http://localhost:8080/api/getPurlUrl'
+  // const url = debug ? '/api/getPurlUrl' : 'http://localhost:8080/api/getPurlUrl'
+  const url = '/api/getPurlUrl';
 
   let mids = []
   let types = []
@@ -54,13 +56,19 @@ export function getSongsUrl(songs) {
         comm: data,
         url_mid: urlMid
       }).then((response) => {
+        console.log(response)
         const res = response.data
         if (res.code === ERR_OK) {
           let urlMid = res.url_mid
           if (urlMid && urlMid.code === ERR_OK) {
-            const info = urlMid.data.midurlinfo[0]
-            if (info && info.purl) {
-              resolve(res)
+            const purlMap = {};
+            urlMid.data.midurlinfo.forEach(item => {
+              if(item.purl) {
+                purlMap[item.songmid] = item.purl;
+              }
+            })
+            if (Object.keys(purlMap).length > 0) {
+              resolve(purlMap)
             } else {
               retry()
             }
