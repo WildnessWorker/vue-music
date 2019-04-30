@@ -26,6 +26,9 @@ const mutation = {
   },
   [type.SET_TOP_LIST](state, topList) {
     state.topList = topList
+  },
+  [type.SET_SEARCH_HISTORY](state, history) {
+    state.searchHistory = history
   }
 }
 export default mutation

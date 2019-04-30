@@ -1,6 +1,7 @@
 <template>
   <div class="search-box">
     <i class="icon-search"></i>
+<<<<<<< HEAD
     <input 
       type="text" 
       class="box" 
@@ -8,12 +9,19 @@
 
       v-model="query" 
       :placeholder="placeholder">
+=======
+    <input type="text" ref="query" class="box" v-model="query" :placeholder="placeholder">
+>>>>>>> fefbe404e5e215ca28908cd4e173ea6abebdcbb5
     <i @click="clear" v-show="query" class="icon-dismiss"></i>
   </div>
 </template>
 
 <script>
 import { debounce } from 'common/js/until';
+<<<<<<< HEAD
+=======
+
+>>>>>>> fefbe404e5e215ca28908cd4e173ea6abebdcbb5
   export default {
     props: {
       placeholder: {
@@ -28,13 +36,19 @@ import { debounce } from 'common/js/until';
     },
     created () {
       this.$watch('query', debounce((newQuqery) => {
+<<<<<<< HEAD
         console.log(newQuqery)
+=======
+>>>>>>> fefbe404e5e215ca28908cd4e173ea6abebdcbb5
         this.$emit('query', newQuqery)
       }, 300))
     },
     methods: {
       clear () {
         this.query = ''
+      },
+      blur () {
+        this.$refs.query.blur();
       },
       setQuery (query) {
         this.query = query

@@ -14,6 +14,7 @@ export function shuffle(arr) {
   return _arr
 }
 
+<<<<<<< HEAD
 //截流函数
 export function debounce(func, delay) {
   let timer
@@ -30,3 +31,19 @@ export function debounce(func, delay) {
     
   }
 }
+=======
+//截留函数
+export function debounce(func, delay) {
+  let timer
+  
+  return function (...args) {
+    if(timer) {
+      clearTimeout(timer)
+    }
+    timer = setTimeout(() => {
+      func.apply(this, args)
+    }, delay);
+  }
+  
+}
+>>>>>>> fefbe404e5e215ca28908cd4e173ea6abebdcbb5
