@@ -25,8 +25,9 @@
             </span>
           </h1>
           <search-list 
-            <!-- @delete="" -->
+            @select="addQuery"
             :searches="searchHistory"
+            @delete="deleteSearch"
           ></search-list>
         </div>
       </div>
@@ -78,11 +79,15 @@ export default {
      saveSearch() {
        this.saveSearchHistory(this.query)
      },
+     deleteSearch(item) {
+       this.deleteSearchHistory(item)
+     },
      onQueryChange (query) {
        this.query = query
      },
      ...mapActions([
-       'saveSearchHistory'
+       'saveSearchHistory',
+       'deleteSearchHistory'
      ])
   },
   components: {

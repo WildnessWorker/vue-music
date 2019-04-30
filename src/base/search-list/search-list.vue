@@ -1,10 +1,10 @@
 <template>
   <div class="search-list" v-show="searches.length">
     <ul>
-      <li class="search-item" @click="selectItem(item)" v-for="item in searches">
+      <li class="search-item" @click.stop="selectItem(item)" v-for="item in searches">
         <span class="text">{{item}}</span>
-        <span class="icon">
-          <i class="icon-delete" @click.stop="deleteOne(item)"></i>
+        <span class="icon" @click.stop="deleteOne(item)">
+          <i class="icon-delete"></i>
         </span>
       </li>
     </ul>

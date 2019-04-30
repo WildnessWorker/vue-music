@@ -18,6 +18,13 @@ function insertArray(arr, val, compare, maxLen) {
     arr.pop()
   }
 }
+//删除搜索记录
+function deleteArray(arr, compare) {
+  const index = arr.findIndex(compare)
+  if (index > -1) {
+    arr.splice(index, 1);
+  }
+}
 
 export function saveSearch(query) {
   let searchs = storage.get(SEARCH_KEY, []);
@@ -25,6 +32,15 @@ export function saveSearch(query) {
     return item === query
   }, SEARCH_MAX_LENGTH)
   storage.set(SEARCH_KEY, searchs);
+  return searchs
+}
+
+export function deleteSearch(query) {
+  let searchs = storage.get(SEARCH_KEY, []);
+  deleteArray(searchs, item => {
+    return item === query
+  })
+  storage.set(SEARCH_KEY, searchs)
   return searchs
 }
 
