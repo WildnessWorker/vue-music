@@ -27,6 +27,10 @@
       pullup: {
         type: Boolean,
         default: false
+      },
+      beforeScroll: {
+        type: Boolean,
+        default: false,
       }
     },
     mounted () {
@@ -57,6 +61,12 @@
               console.log(1)
               this.$emit('scrollToEnd')
             }
+          })
+        }
+
+        if(this.beforeScroll) {
+          this.scroll.on('beforeScrollStart', () => {
+            this.$emit('beforeScroll')
           })
         }
       },

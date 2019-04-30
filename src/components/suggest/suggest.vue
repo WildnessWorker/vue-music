@@ -2,7 +2,9 @@
   <scroll class="suggest" 
     :data="result" 
     :pullup="pullup"
+    :beforeScroll="beforeScroll"
     @scrollToEnd="searchMore"
+    @beforeScroll="listScroll"
     ref="suggest"
   >
     <ul class="suggest-list">
@@ -20,6 +22,9 @@
       </li>
       <loading v-show="hasMore" title=""></loading>
     </ul>
+    <div v-show="!hasMore && !result.length" class="no-result-wrapper">
+      <no-result title="抱歉，暂无搜索结果"></no-result>
+    </div>
   </scroll>
 </template>
 
@@ -28,6 +33,7 @@ import Scroll from 'base/scroll/scroll'
 import { search } from "api/search"
 import {ERR_OK} from 'api/config'
 import { createSong, isValidMusic, processSongsUrl } from 'common/js/song'
+import NoResult from 'base/no-result/no-result'
 import Loading from 'base/loading/loading'
 import Singer from 'common/js/singer'
 import {mapMutations, mapActions} from 'vuex'
@@ -52,6 +58,7 @@ export default {
       result: [],
       pullup: true,
       hasMore: true,
+      beforeScroll: true
     };
   },
   methods: {
@@ -86,7 +93,6 @@ export default {
         const list = this._validateData(res);
         if (list.data) {
           this._genResult(list.data).then((result) => {
-            console.log(result)
             this.result = result
           })
           this._checkMore(list.data)
@@ -106,6 +112,9 @@ export default {
         this._checkMore(data.data)
       })
     },
+    listScroll() {
+      this.$emit('listScroll')
+    },
     _checkMore(data) {
       const song = data.song
       if (!song.list.length || (song.curnum + song.curpage * PERPAGE) > song.totalnum) {
@@ -113,14 +122,14 @@ export default {
       }
     },
     _genResult (data) {
+      console.log(data)
       let ret = []
       // if (data.zhida && data.zhida.singerid) {
-      if (data.zhida && data.zhida.zhida_singer.singerID) {
+      if (data.zhida && data.zhida.zhida_singer && data.song.curpage === 1) {
         ret.push({...data.zhida, ...{type: TYPE_SINGER}})
       }
       return processSongsUrl(this._normalizeSongs(data.song.list)).then((songs) => {
         ret = ret.concat(songs)
-        console.log(ret)
         return ret
       })
     },
@@ -146,7 +155,9 @@ export default {
       } else {
         this.insertSong(item)
       }
+      this.$emit('select')
     },
+    
     ...mapMutations({
       setSinger: 'SET_SINGER'
     }),
@@ -156,7 +167,6 @@ export default {
   },
   watch: {
     query(newQuery) {
-      console.log(newQuery)
       if (!newQuery) {
         return 
       }
@@ -165,7 +175,8 @@ export default {
   },
   components: {
     Scroll,
-    Loading
+    Loading,
+    NoResult
   }
 }
 </script>
