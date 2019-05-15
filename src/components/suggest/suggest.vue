@@ -22,13 +22,8 @@
       </li>
       <loading v-show="hasMore" title=""></loading>
     </ul>
-<<<<<<< HEAD
-    <div class="no-result-wrapper">
-      <no-result v-show="!hasMore && !result.length" title="抱歉，暂无搜索结果"></no-result>
-=======
     <div v-show="!hasMore && !result.length" class="no-result-wrapper">
       <no-result title="抱歉，暂无搜索结果"></no-result>
->>>>>>> fefbe404e5e215ca28908cd4e173ea6abebdcbb5
     </div>
   </scroll>
 </template>
@@ -40,7 +35,6 @@ import {ERR_OK} from 'api/config'
 import { createSong, isValidMusic, processSongsUrl } from 'common/js/song'
 import NoResult from 'base/no-result/no-result'
 import Loading from 'base/loading/loading'
-import NoResult from 'base/no-result/no-result';
 import Singer from 'common/js/singer'
 import {mapMutations, mapActions} from 'vuex'
 
@@ -119,13 +113,8 @@ export default {
         this._checkMore(data.data)
       })
     },
-<<<<<<< HEAD
-    listScroll () {
-      this.$emit('listScroll');
-=======
     listScroll() {
       this.$emit('listScroll')
->>>>>>> fefbe404e5e215ca28908cd4e173ea6abebdcbb5
     },
     _checkMore(data) {
       const song = data.song
@@ -136,12 +125,8 @@ export default {
     _genResult (data) {
       console.log(data)
       let ret = []
-<<<<<<< HEAD
-      if (data.zhida && data.zhida.zhida_singer && data.semantic.curpage === 1) {
-=======
       // if (data.zhida && data.zhida.singerid) {
       if (data.zhida && data.zhida.zhida_singer && data.song.curpage === 1) {
->>>>>>> fefbe404e5e215ca28908cd4e173ea6abebdcbb5
         ret.push({...data.zhida, ...{type: TYPE_SINGER}})
       }
       return processSongsUrl(this._normalizeSongs(data.song.list)).then((songs) => {

@@ -30,11 +30,7 @@
       },
       beforeScroll: {
         type: Boolean,
-<<<<<<< HEAD
-        default: false
-=======
         default: false,
->>>>>>> fefbe404e5e215ca28908cd4e173ea6abebdcbb5
       }
     },
     mounted () {
@@ -68,11 +64,7 @@
           })
         }
 
-<<<<<<< HEAD
-        if (this.beforeScroll) {
-=======
         if(this.beforeScroll) {
->>>>>>> fefbe404e5e215ca28908cd4e173ea6abebdcbb5
           this.scroll.on('beforeScrollStart', () => {
             this.$emit('beforeScroll')
           })

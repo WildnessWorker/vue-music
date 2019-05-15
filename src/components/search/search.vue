@@ -20,24 +20,20 @@
         <div class="search-history" v-show="searchHistory.length">
           <h1 class="title">
             <span class="text">搜索历史</span>
-            <span class="clear">
+            <span class="clear" @click="clearSearchHistory">
               <i class="icon-clear"></i>
             </span>
           </h1>
           <search-list 
             @select="addQuery"
             :searches="searchHistory"
-            @delete="deleteSearch"
+            @delete="deleteSearchHistory"
           ></search-list>
         </div>
       </div>
     </div>
     <div class="search-result" v-show="query">
-<<<<<<< HEAD
-      <suggest :query="query" @listScroll="blurInput"></suggest>
-=======
       <suggest @listScroll="blurInput" @select="saveSearch" :query="query"></suggest>
->>>>>>> fefbe404e5e215ca28908cd4e173ea6abebdcbb5
     </div>
     <router-view></router-view>
   </div>
@@ -80,21 +76,16 @@ export default {
      blurInput() {
        this.$refs.searchBox.blur();
      },
-<<<<<<< HEAD
-=======
      saveSearch() {
        this.saveSearchHistory(this.query)
      },
-     deleteSearch(item) {
-       this.deleteSearchHistory(item)
-     },
->>>>>>> fefbe404e5e215ca28908cd4e173ea6abebdcbb5
      onQueryChange (query) {
        this.query = query
      },
      ...mapActions([
        'saveSearchHistory',
-       'deleteSearchHistory'
+       'deleteSearchHistory',
+       'clearSearchHistory'
      ])
   },
   components: {
