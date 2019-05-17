@@ -35,10 +35,6 @@ import { debounce } from 'common/js/until';
       setQuery (query) {
         this.query = query
       },
-      blur() {
-        console.log(this.$refs.query)
-        this.$refs.query.blur();
-      }
     }
   }
 </script>

@@ -1,13 +1,13 @@
     
 <template>
   <transition name="confirm-fade">
-    <div class="confirm" >
+    <div class="confirm" v-show="showFlag" @click.stop>
       <div class="confirm-wrapper">
         <div class="confirm-content">
           <p class="text">{{text}}</p>
           <div class="operate">
-            <div  class="operate-btn left">{{cancelBtnText}}</div>
-            <div class="operate-btn">{{confirmBtnText}}</div>
+            <div class="operate-btn left" @click="cancel">{{cancelBtnText}}</div>
+            <div class="operate-btn" @click="confirm">{{confirmBtnText}}</div>
           </div>
         </div>
       </div>
@@ -37,12 +37,27 @@
       }
     },
     methods: {
-      
+      show() {
+        this.showFlag = true;
+      },
+      hide() {
+        this.showFlag = false;
+      }, 
+      cancel() {
+        this.hide();
+        this.$emit('cancel')
+      },
+      confirm() {
+        this.hide()
+        this.$emit('confirm')
+      }
+    }
   }
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
+
   .confirm
     position: fixed
     left: 0
@@ -96,3 +111,4 @@
       transform: scale(1.1)
     100%
       transform: scale(1)
+</style>

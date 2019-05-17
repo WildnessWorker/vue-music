@@ -108,11 +108,12 @@
             <i :class="miniIcon" class="icon-mini" @click.stop="togglePlaying"></i>
           </progress-circle>
         </div>
-  			<div class="control">
+  			<div class="control" @click.stop="showPlaylist">
   				<i class="icon-playlist"></i>
   			</div>
   		</div>
   </transition>
+  <playlist ref="playlist"></playlist>
   <audio
     :src="currentSong.url"
     ref="audio"
@@ -132,13 +133,15 @@
   import ProgressCircle from 'base/progress-circle/progress-circle'
   import Lyric from 'lyric-parser'
   import {playMode} from 'common/js/config'
-  import {shuffle} from 'common/js/until'
   import Scroll from 'base/scroll/scroll'
+  import Playlist from 'components/playlist/playlist'
+  import {playerMixin} from 'common/js/mixin'
 
   const transform = prefixStyle('transform')
   const transitionDuration = prefixStyle('transitionDuration')
 
 	export default {
+    mixins: [playerMixin],
     data () {
       return {
         songRady: false,
@@ -151,9 +154,6 @@
       }
     },
 		computed: {
-      iconMode () {
-        return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
-      },
       cdCls () {
         return this.playing ? 'play' : 'pause'
       },
@@ -171,12 +171,8 @@
       },
 			...mapGetters([
 				'fullScreen',
-				'playlist',
-        'currentSong',
-        'playing',
         'currentIndex',
-        'sequenceList',
-        'mode'
+        'playing',
 			])
 		},
     created () {
@@ -322,25 +318,6 @@
         	this.currentLyric.seek(currentTime * 1000)
         }
       },
-      changeMode () {
-        const mode = (this.mode + 1) % 3
-        this.setPlayMode(mode)
-        let list = null
-        if (this.mode === playMode.random) {
-          list = shuffle(this.sequenceList)
-        } else {
-          list = this.sequenceList
-        }
-        this.resetCurrentIndex(list)
-        this.setPlayList(list)
-      },
-      //播放模式更改为随机播放以后为了让当前播放歌曲不发生变化，所以要相应的更改新歌曲列表的index
-      resetCurrentIndex (list) {
-        let index = list.findIndex((item) => {
-          return item.id === this.currentSong.id
-        })
-        this.setCurrentIndex(index)
-      },
       getLyric() {
         this.currentSong.getLyric().then((lyric) => {
           this.currentLyric = new Lyric(lyric, this.handleLyric)   //传入lyric base64码，对歌词编码进行解析
@@ -446,16 +423,19 @@
         let iTransform = getComputedStyle(image)[transform]
         imageWrapper.style[transform] = wTransform === 'none' ? iTransform : iTransform.concat(' ', wTransform)
        },
+       showPlaylist() {
+         this.$refs.playlist.show()
+       },
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN',
         setPlayingState: 'SET_PLAYING_STATE',
-        setCurrentIndex: 'SET_CURRENT_INDEX',
-        setPlayMode : 'SET_PLAY_MODE',
-        setPlayList: 'SET_PLAYLIST'
       })
     },
     watch: {
       currentSong (newSong, oldSong) {
+        if(!newSong.id) {
+          return
+        }
         if (newSong.id === oldSong.id) {
           return
         }
@@ -485,7 +465,8 @@
     components: {
       ProgressBar,
       ProgressCircle,
-      Scroll
+      Scroll,
+      Playlist
     }
 	}
 </script>

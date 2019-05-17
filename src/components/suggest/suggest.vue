@@ -45,11 +45,11 @@ export default {
   props: {
     query: {
       type: String,
-      default: ""
+      default: "" 
     },
     showSinger: {
       type: Boolean,
-      default: true
+      default: true //搜索结果是否搜索歌手
     }
   },
   data() {
@@ -113,6 +113,9 @@ export default {
         this._checkMore(data.data)
       })
     },
+    refresh() {
+      this.$refs.suggest.refresh()
+    },
     listScroll() {
       this.$emit('listScroll')
     },
@@ -123,7 +126,6 @@ export default {
       }
     },
     _genResult (data) {
-      console.log(data)
       let ret = []
       // if (data.zhida && data.zhida.singerid) {
       if (data.zhida && data.zhida.zhida_singer && data.song.curpage === 1) {
@@ -146,8 +148,8 @@ export default {
     selectItem (item) {
       if (item.type === TYPE_SINGER) {
         const singer = new Singer({
-          id: item.singermid,
-          name: item.singername
+          id: item.zhida_singer.singerMID,
+          name: item.zhida_singer.singerName
         })
         this.$router.push({
           path: `/search/${singer.id}`

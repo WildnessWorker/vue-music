@@ -80,6 +80,37 @@ export const insertSong = function ({commit, state}, song) {
 	commit(type.SET_PLAYING_STATE, true);
 }
 
+//删除播放列表中的一首歌曲
+export const deleteSong = function ({commit, state}, song) {
+	//首先获取到删除一首歌曲需要变更的播放列表 顺序列表 与当前播放歌曲的索引
+	let playlist = state.playlist.slice()
+	let sequenceList = state.sequenceList.slice()
+	let currentIndex = state.currentIndex
+	//获取到此歌曲在当前播放列表中的索引并删除
+	let pIndex = findIndex(playlist, song);
+	playlist.splice(pIndex, 1)
+	let sIndex = findIndex(sequenceList, song);
+	sequenceList.splice(sIndex, 1);
+	//判断当前播放歌曲的索引与被删除歌曲索引的大小，如果大于被删除的索引，需要 -1 如果小鱼则不需要改变
+	if (currentIndex > pIndex || currentIndex === playlist.length) {
+		currentIndex--
+	}
+
+	commit(type.SET_PLAYLIST, playlist)
+	commit(type.SET_SEQUENCE_LIST, sequenceList)
+	commit(type.SET_CURRENT_INDEX, currentIndex)
+	const playingState = playlist.length ? true : false;
+	commit(type.SET_PLAYING_STATE, playingState)
+}
+
+//清空播放列表
+export const deleteSongList = function({commit}) {
+	commit(type.SET_PLAYLIST, [])
+	commit(type.SET_SEQUENCE_LIST, [])
+	commit(type.SET_CURRENT_INDEX, -1)
+	commit(type.SET_PLAYING_STATE, false)
+}
+
 //保存搜索历史记录
 export const saveSearchHistory = function ({commit}, query) {
 	commit(type.SET_SEARCH_HISTORY, saveSearch(query))
