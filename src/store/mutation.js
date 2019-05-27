@@ -29,6 +29,9 @@ const mutation = {
   },
   [type.SET_SEARCH_HISTORY](state, history) {
     state.searchHistory = history
+  },
+  [type.SET_PLAY_HISTORY](state, history) {
+    state.playHistory = history
   }
 }
 export default mutation

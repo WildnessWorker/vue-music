@@ -10,7 +10,40 @@
       <div class="search-box-wrapper">
         <search-box ref="searchBox" @query="onQueryChange" placeholder="搜索歌曲"></search-box>
       </div>
-      <div class="shortcut" v-show="!query"></div>
+      <div class="shortcut" v-show="!query">
+        <switches 
+          @switch="switchItem" 
+          :switches="switches"
+          :currentIndex="currentIndex"
+        ></switches>
+        <div class="list-wrapper">
+          <Scroll 
+            class="list-scroll" 
+            :data="playHistory"
+            ref="songList"
+            v-if="currentIndex===0">
+            <div class="list-inner">
+              <song-list 
+                :songs="playHistory"
+                @select="selectSong"
+              ></song-list>
+            </div>
+          </Scroll>
+          <Scroll 
+            class="list-scroll" 
+            v-if="currentIndex===1" 
+            :data="searchHistory"
+            ref="searchList"
+          >
+            <div class="list-inner">
+              <search-list
+                :searches="searchHistory" 
+                @delete="deleteSearchHistory" 
+                @select="addQuery"></search-list>
+            </div>
+          </Scroll>
+        </div>
+      </div>
       <div class="search-result" v-show="query">
         <suggest 
           :query="query" 
@@ -19,15 +52,28 @@
           @listScroll="blurInput"
         ></suggest>
       </div>
+      <top-tip ref="topTip">
+        <div class="tip-title">
+          <i class="icon-ok"></i>
+          <span class="text">已添加到播放队列</span>
+        </div>
+      </top-tip>
     </div>
   </transition>
 </template>
 
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
 import SearchBox from 'base/search-box/search-box'
 import Suggest from 'components/suggest/suggest'
 import { searchMixin } from 'common/js/mixin';
+import Switches from 'base/switches/switches'
+import Scroll from 'base/scroll/scroll'
+import SongList from 'base/song-list/song-list'
+import SearchList from 'base/search-list/search-list'
+import Song from 'common/js/song'
+import TopTip from 'base/top-tip/top-tip'
 
 export default {
   mixins: [searchMixin],
@@ -35,11 +81,25 @@ export default {
     return {
       showFlag: false,
       showSinger: false,
+      switches: [{name: '最近播放'}, {name: '搜索历史'}],
+      currentIndex: 0
     };
+  },
+  computed: {
+    ...mapGetters([
+      'playHistory'
+    ])
   },
   methods: {
     show() {
       this.showFlag = true;
+      setTimeout(() => {
+        if(this.currentIndex === 0) {
+          this.$refs.songList.refresh();
+        } else {
+          this.$refs.searchList.refresh();
+        }
+      })
     },
     hide() {
       console.log('hide')
@@ -47,11 +107,34 @@ export default {
     },
     selectSuggest() {
       this.saveSearch()
-    }
+    },
+    switchItem(index) {
+      this.currentIndex = index;
+    },
+    selectSong(song, index) {
+      if(index !== 0) {
+        this.insertSong(new Song(song))
+        this.showTip()
+      }
+    },
+    showTip() {
+      this.$refs.topTip.show()
+    },
+    hideTip() {
+      this.$refs.topTip.hide()
+    },
+    ...mapActions([
+      'insertSong'
+    ])
   },
   components: {
     SearchBox,
-    Suggest
+    Suggest,
+    Switches,
+    Scroll,
+    SongList,
+    SearchList,
+    TopTip
   }
 };
 </script>
