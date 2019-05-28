@@ -31,6 +31,10 @@
       beforeScroll: {
         type: Boolean,
         default: false,
+      },
+      refreshDelay: {   //通过此的变量来控制数据发生变化以后，过多久以后再重新计算高度
+        type: Number,
+        default: 20
       }
     },
     mounted () {
@@ -91,7 +95,7 @@
       data () {
         setTimeout(() => {
           this.refresh()
-        }, 20)
+        }, this.refreshDelay)
       }
     }
   }

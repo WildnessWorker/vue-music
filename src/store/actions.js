@@ -1,7 +1,7 @@
 import * as type from './mutation-type'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/until'
-import {saveSearch, deleteSearch, clearSearch, savePlay} from 'common/js/cache'
+import {saveSearch, deleteSearch, clearSearch, savePlay, saveFavorite, deleteFavorite} from 'common/js/cache'
 
 function findIndex(list, song) {
 	return list.findIndex((item) => {
@@ -129,4 +129,12 @@ export const deleteSearchHistory = function ({commit}, query) {
 //删除全部历史搜索记录
 export const clearSearchHistory = function ({commit}) {
 	commit(type.SET_SEARCH_HISTORY, clearSearch())
+}
+
+export const saveFavoriteList = function({commit}, song) {
+	commit(type.SET_FAVORITE_LIST, saveFavorite(song))
+}
+
+export const deleteFavoriteList = function({commit}, song) {
+	commit(type.SET_FAVORITE_LIST, deleteFavorite(song))
 }

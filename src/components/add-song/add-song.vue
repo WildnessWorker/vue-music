@@ -34,6 +34,7 @@
             v-if="currentIndex===1" 
             :data="searchHistory"
             ref="searchList"
+            :refreshDelay="refreshDelay"
           >
             <div class="list-inner">
               <search-list
@@ -82,7 +83,7 @@ export default {
       showFlag: false,
       showSinger: false,
       switches: [{name: '最近播放'}, {name: '搜索历史'}],
-      currentIndex: 0
+      currentIndex: 0,
     };
   },
   computed: {

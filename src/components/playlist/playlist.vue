@@ -11,7 +11,12 @@
             </span>
           </h1>
         </div>
-        <Scroll :data="sequenceList" ref="listContent" class="list-content">
+        <Scroll 
+          :data="sequenceList" 
+          ref="listContent" 
+          class="list-content"
+          :refreshDelay="refreshDelay"
+        >
           <transition-group ref="list" name="list" tag="ul">
             <li
               :key="item.id"
@@ -22,8 +27,8 @@
             >
               <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text">{{item.name}}</span>
-              <span class="like">
-                <i class="icon-not-favorite"></i>
+              <span class="like" @click.stop="toggleFavorite(item)">
+                <i :class="getFavoriteIcon(item)"></i>
               </span>
               <span class="delete" @click.stop="deleteOne(item)">
                 <i class="icon-delete"></i>
@@ -65,7 +70,8 @@ export default {
   mixins: [playerMixin],
   data() {
     return {
-      showFlag: false
+      showFlag: false,
+      refreshDelay: 100,
     };
   },
   computed: {
