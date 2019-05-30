@@ -240,7 +240,8 @@
           return
         }
         if (this.playlist === 1) {
-        	this.loop()
+          this.loop()
+          return
         } else {
 	        let index = this.currentIndex - 1
 	        if (this.currentIndex - 1 === -1) {
@@ -257,7 +258,7 @@
         if (this.mode === playMode.loop){
           this.loop()
         } else {
-        this.next()
+          this.next()
         }
       },
       loop () {
@@ -272,8 +273,9 @@
         if (!this.songRady) {
           return
         }
-        if (this.playlist === 1) {
-        	this.loop()
+        if (this.playlist.length === 1) {
+          this.loop()
+          return
         } else {
 	        let index = this.currentIndex + 1
 	        if (index === this.playlist.length) {
@@ -323,6 +325,10 @@
       },
       getLyric() {
         this.currentSong.getLyric().then((lyric) => {
+          //此判断防止歌词混乱，因为用户可能过快切换歌曲，而此方法又是一个异步方法，可能会造成歌词多生多个
+          if(this.currentSong.lyric !== lyric) {
+            return
+          }
           this.currentLyric = new Lyric(lyric, this.handleLyric)   //传入lyric base64码，对歌词编码进行解析
           if (this.playing) {
             this.currentLyric.play()
